@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:tamuhack2023/logging.dart';
-import 'package:tamuhack2023/camera.dart';
+import 'package:tamuhack2023/screens/camera.dart';
 import 'package:tamuhack2023/utils.dart';
+
+final backendUrl =
+    Uri.parse("https://tamuhack2023-backend.elinicksic1.repl.co/analyze");
 
 List<CameraDescription> _cameras = <CameraDescription>[];
 
@@ -69,68 +74,96 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    int buttonAlpha = 128;
-
     return Scaffold(
-      body: Stack(
-        children: [
-          // Display the camera
-          FutureBuilder<void>(
-            future: _initializeControllerFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                // If the Future is complete, display the preview.
-                return FullscreenWidget(controller: _controller);
-              } else {
-                // Otherwise, display a loading indicator.
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
-
-          OrientationBuilder(builder: (context, orientation) {
-            return Align(
-              alignment: orientation == Orientation.portrait
-                  ? Alignment.bottomCenter
-                  : Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: GestureDetector(
-                  // Capture a photo and moves to the next screen
-                  onTap: () {
-                    print('test');
+      body: Container(
+        decoration: const BoxDecoration(color: Colors.black),
+        child: Stack(
+          children: [
+            // Display the camera
+            OrientationBuilder(builder: (context, orientation) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 75),
+                // padding: orientation == Orientation.portrait
+                //     ? const EdgeInsets.only(top: 75)
+                //     : const EdgeInsets.only(left: 75),
+                child: FutureBuilder<void>(
+                  future: _initializeControllerFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      // If the Future is complete, display the preview.
+                      return CameraPreview(_controller);
+                    } else {
+                      // Otherwise, display a loading indicator.
+                      return const Center(child: CircularProgressIndicator());
+                    }
                   },
+                ),
+              );
+            }),
 
-                  // Add feedback on tap
-                  onTapDown: (details) {
-                    setState(() {
-                      buttonAlpha = 255;
-                    });
-                    print('down $buttonAlpha');
-                  },
-                  onTapUp: (details) {
-                    setState(() {
-                      buttonAlpha = 128;
-                    });
-                    print('up $buttonAlpha');
-                  },
+            OrientationBuilder(builder: (context, orientation) {
+              return Align(
+                alignment: orientation == Orientation.portrait
+                    ? Alignment.bottomCenter
+                    : Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: GestureDetector(
+                    // Capture a photo and moves to the next screen
+                    onTap: () async {
+                      try {
+                        // Ensure that the camera is initialized.
+                        await _initializeControllerFuture;
 
-                  child: SizedBox(
-                    width: 80,
-                    height: 80,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Color.fromARGB(buttonAlpha, 0, 0, 0),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 5),
+                        // Attempt to take a picture and get the file `image`
+                        // where it was saved.
+                        final image = await _controller.takePicture();
+                        print(
+                            "\n\n\n\n\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n\n\n");
+
+                        var response = await http.post(
+                          backendUrl,
+                          headers: {"Access-Control-Allow-Origin": "*"},
+                          body: base64Encode(await image.readAsBytes()),
+                        );
+                        print(
+                            "\n\n\n\n\nBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n\n\n\n\n");
+                        print(response.body);
+                      } catch (e) {
+                        // If an error occurs, log the error to the console.
+                        print(e);
+                      }
+                      print('test');
+                    },
+
+                    // Add feedback on tap
+                    onTapDown: (details) {
+                      print('down');
+                    },
+                    onTapUp: (details) {
+                      print('up');
+                    },
+
+                    child: SizedBox(
+                      width: 80,
+                      height: 80,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white,
+                            width: 5,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
-          }),
-        ],
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
