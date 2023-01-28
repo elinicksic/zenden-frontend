@@ -88,44 +88,48 @@ class _AppState extends State<App> {
             },
           ),
 
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GestureDetector(
-                // Capture a photo and moves to the next screen
-                onTap: () {
-                  print('test');
-                },
+          OrientationBuilder(builder: (context, orientation) {
+            return Align(
+              alignment: orientation == Orientation.portrait
+                  ? Alignment.bottomCenter
+                  : Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GestureDetector(
+                  // Capture a photo and moves to the next screen
+                  onTap: () {
+                    print('test');
+                  },
 
-                // Add feedback on tap
-                onTapDown: (details) {
-                  setState(() {
-                    buttonAlpha = 255;
-                  });
-                  print('down $buttonAlpha');
-                },
-                onTapUp: (details) {
-                  setState(() {
-                    buttonAlpha = 128;
-                  });
-                  print('up $buttonAlpha');
-                },
+                  // Add feedback on tap
+                  onTapDown: (details) {
+                    setState(() {
+                      buttonAlpha = 255;
+                    });
+                    print('down $buttonAlpha');
+                  },
+                  onTapUp: (details) {
+                    setState(() {
+                      buttonAlpha = 128;
+                    });
+                    print('up $buttonAlpha');
+                  },
 
-                child: SizedBox(
-                  width: 80,
-                  height: 80,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(buttonAlpha, 0, 0, 0),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 5),
+                  child: SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(buttonAlpha, 0, 0, 0),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 5),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );
