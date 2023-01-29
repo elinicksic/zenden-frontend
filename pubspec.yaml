@@ -35,7 +35,6 @@ dependencies:
   percent_indicator: ^4.2.2
   http: ^0.13.5
   image_picker: ^0.8.6+1
-  path_provider: ^2.0.12
 
   localstorage: ^4.0.0+1
 
