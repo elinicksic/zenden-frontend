@@ -6,6 +6,7 @@ import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:tamuhack2023/logging.dart';
+import 'package:tamuhack2023/models/api_response.dart';
 import 'package:tamuhack2023/screens/camera.dart';
 import 'package:tamuhack2023/utils.dart';
 
@@ -82,7 +83,13 @@ class _AppState extends State<App> {
             // Display the camera
             OrientationBuilder(builder: (context, orientation) {
               return Padding(
-                padding: const EdgeInsets.only(top: 75),
+                padding: EdgeInsets.only(
+                  top: (_controller.value.previewSize != null
+                          ? MediaQuery.of(context).size.longestSide -
+                              _controller.value.previewSize!.longestSide
+                          : 0) /
+                      4,
+                ),
                 // padding: orientation == Orientation.portrait
                 //     ? const EdgeInsets.only(top: 75)
                 //     : const EdgeInsets.only(left: 75),
@@ -107,7 +114,7 @@ class _AppState extends State<App> {
                     ? Alignment.bottomCenter
                     : Alignment.centerRight,
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(32.0),
                   child: GestureDetector(
                     // Capture a photo and moves to the next screen
                     onTap: () async {
@@ -118,25 +125,22 @@ class _AppState extends State<App> {
                         // Attempt to take a picture and get the file `image`
                         // where it was saved.
                         final image = await _controller.takePicture();
-                        print(
-                            "\n\n\n\n\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n\n\n");
 
-                        var response = await http.post(
+                        final response = await http.post(
                           backendUrl,
-                          headers: {"Access-Control-Allow-Origin": "*"},
                           body: base64Encode(await image.readAsBytes()),
                         );
-                        print(
-                            "\n\n\n\n\nBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n\n\n\n\n");
-                        print(response.body);
+
+                        final data =
+                            ApiResponse.fromJson(jsonDecode(response.body));
                       } catch (e) {
                         // If an error occurs, log the error to the console.
                         print(e);
                       }
-                      print('test');
                     },
 
                     // Add feedback on tap
+                    // TODO: tap animation
                     onTapDown: (details) {
                       print('down');
                     },
