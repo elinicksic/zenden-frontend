@@ -39,8 +39,6 @@ class _ResultsPageState extends State<ResultsPage> {
       body: Center(
         child: SafeArea(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -48,7 +46,7 @@ class _ResultsPageState extends State<ResultsPage> {
                   GestureDetector(
                       child: const Icon(Icons.arrow_back_ios_new_rounded,
                           size: 30),
-                      onTap: () => Navigator.pop(context)),
+                      onTap: () => Navigator.of(context).popUntil((route) => route.isFirst)),
                   const Spacer(),
                 ],
               ),
