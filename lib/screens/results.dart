@@ -85,17 +85,23 @@ class _ResultsPageState extends State<ResultsPage> {
               ),
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: TextField(
+                child: TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: Colors.black),
-                      ),
-                      label: const Text('Room Name')),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.black),
+                    ),
+                    label: const Text('Room Name'),
+                  ),
+                  validator: (String? value) {
+                    return (value != null && RegExp("[\w.-]+").hasMatch(value))
+                        ? 'Empty string'
+                        : 'yeel';
+                  },
                 ),
               ),
               Padding(
@@ -166,7 +172,7 @@ class _ResultsPageState extends State<ResultsPage> {
                       health == Health.good
                           ? Colors.green
                           : health == Health.acceptable
-                              ? Colors.yellow
+                              ? Colors.orange
                               : Colors.red,
                     ),
                     backgroundColor: const MaterialStatePropertyAll<Color>(
@@ -178,7 +184,7 @@ class _ResultsPageState extends State<ResultsPage> {
                           color: health == Health.good
                               ? Colors.green
                               : health == Health.acceptable
-                                  ? Colors.yellow
+                                  ? Colors.orange
                                   : Colors.red,
                           width: 3,
                         ),
@@ -194,7 +200,7 @@ class _ResultsPageState extends State<ResultsPage> {
                           color: health == Health.good
                               ? Colors.green
                               : health == Health.acceptable
-                                  ? Colors.yellow
+                                  ? Colors.orange
                                   : Colors.red,
                         ),
                       ),
