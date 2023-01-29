@@ -213,8 +213,39 @@ class _HomeState extends State<Home> {
               ),
               TextButton(
                 onPressed: () async {
-                  final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) => RoomSetup(img: Image.file(File(image!.path), fit: BoxFit.cover,))));
+                  showDialog(context: context, builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Image Source'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: const Text('Camera'),
+                          onPressed: () async {
+                            final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+                            if(image != null) {
+                              Navigator.of(context).push(CupertinoPageRoute(
+                                  builder: (context) =>
+                                      RoomSetup(img: Image.file(
+                                        File(image!.path),
+                                        fit: BoxFit.cover,))));
+                            }
+                          },
+                        ),
+                        TextButton(
+                          child: const Text('Storage'),
+                          onPressed: () async {
+                            final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+                            if(image != null) {
+                              Navigator.of(context).push(CupertinoPageRoute(
+                                  builder: (context) =>
+                                      RoomSetup(img: Image.file(
+                                        File(image!.path),
+                                        fit: BoxFit.cover,))));
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  });
                 },
                 style: ButtonStyle(
                   overlayColor: MaterialStateProperty.all(Colors.purpleAccent),
