@@ -148,7 +148,7 @@ class _HomeState extends State<Home> {
                 child: ClipRRect(
                   borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
                   child: GridView.count(
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.all(0),
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
