@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:tamuhack2023/screens/roomsetup.dart';
 
 import '../main.dart';
 
@@ -26,12 +30,12 @@ class _HomeState extends State<Home> {
   final ImagePicker _picker = ImagePicker();
 
   final testData = [
-  {'id': '1', 'img': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 'rs': 0.6, 'name': 'Help', 'desc': 'Lorem ipsum dolor sit amet what an idiot closing the gap from the inside this guy only knows how to start from the front'},
-  {'id': '2', 'img': 'https://t3.ftcdn.net/jpg/03/09/15/38/360_F_309153899_e6oWpcNBV44DEx52vikvw9a5XNlw7pVb.jpg', 'rs': 0.4, 'name': 'Help', 'desc': 'I am trapped inside room'},
-  {'id': '3', 'img': 'https://media.istockphoto.com/id/1129813604/photo/empty-minimalist-room-with-gray-wall-on-background.jpg?s=612x612&w=0&k=20&c=56EjJTKfoXHWrbPZn9FXt4kWcJf2OwUj6pnh4zFSo6U=', 'rs': 0.6, 'name': 'Help', 'desc': 'lol'},
-  {'id': '4', 'img': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 'rs': 0.2, 'name': 'Help', 'desc': 'lol'},
-  {'id': '5', 'img': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 'rs': 0.4, 'name': 'Help', 'desc': 'lol'},
-  {'id': '6', 'img': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 'rs': 0.5, 'name': 'Help', 'desc': 'lol'},
+  {'id': '1', 'img': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 'rs': 0.6, 'name': 'Help', 'desc': 'Lorem ipsum dolor sit amet what an idiot closing the gap from the inside this guy only knows how to start from the front', 'cat':'Bedroom'},
+  {'id': '2', 'img': 'https://t3.ftcdn.net/jpg/03/09/15/38/360_F_309153899_e6oWpcNBV44DEx52vikvw9a5XNlw7pVb.jpg', 'rs': 0.4, 'name': 'Help', 'desc': 'I am trapped inside room', 'cat':'Living Room'},
+  {'id': '3', 'img': 'https://media.istockphoto.com/id/1129813604/photo/empty-minimalist-room-with-gray-wall-on-background.jpg?s=612x612&w=0&k=20&c=56EjJTKfoXHWrbPZn9FXt4kWcJf2OwUj6pnh4zFSo6U=', 'rs': 0.6, 'name': 'Help', 'desc': 'lol', 'cat':'Bedroom'},
+  {'id': '4', 'img': 'https://t3.ftcdn.net/jpg/03/09/15/38/360_F_309153899_e6oWpcNBV44DEx52vikvw9a5XNlw7pVb.jpg', 'rs': 0.2, 'name': 'Help', 'desc': 'lol', 'cat':'Bedroom'},
+  {'id': '5', 'img': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 'rs': 0.4, 'name': 'Help', 'desc': 'lol', 'cat':'Living Room'},
+  {'id': '6', 'img': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 'rs': 0.5, 'name': 'Help', 'desc': 'lol', 'cat':'Bedroom'},
   ];
 
   @override
@@ -40,7 +44,7 @@ class _HomeState extends State<Home> {
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Container(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 64),
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 38),
           child: Column(
             children: [
               AspectRatio(
@@ -64,22 +68,19 @@ class _HomeState extends State<Home> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
                             Text(
-                              'Welcome Home',
+                              'Welcome',
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 22,
                                 fontWeight: FontWeight.bold
                               ),
                             ),
-                            SizedBox(
-                              width: 150,
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text(
-                                  'James May',
-                                  style: TextStyle(
-                                    fontSize: 44,
-                                    fontWeight: FontWeight.w300
-                                  ),
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'Home',
+                                style: TextStyle(
+                                  fontSize: 44,
+                                  fontWeight: FontWeight.w300
                                 ),
                               ),
                             )
@@ -180,14 +181,24 @@ class _HomeState extends State<Home> {
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: GridView.count(
-                    padding: const EdgeInsets.all(0),
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    children: [
-                      for(var room in testData) roomBox(room['id'] as String, room['img'] as String, room['rs'] as double, room['name'] as String, room['desc'] as String)
-                    ],
+                  child: Builder(
+                    builder: (context) {
+                      List<Widget> gridList = [];
+                      for(var room in testData) {
+                        if(dropdownValue==room['cat']||dropdownValue=='Recent Room Captures') {
+                          gridList.add(roomBox(room['id'] as String, room['img'] as String,
+                              room['rs'] as double, room['name'] as String,
+                              room['desc'] as String));
+                        }
+                      }
+                      return GridView.count(
+                        padding: const EdgeInsets.all(0),
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        children: gridList
+                      );
+                    }
                   ),
                 ),
               ),
@@ -203,6 +214,7 @@ class _HomeState extends State<Home> {
               TextButton(
                 onPressed: () async {
                   final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+                  Navigator.of(context).push(CupertinoPageRoute(builder: (context) => RoomSetup(img: Image.file(File(image!.path), fit: BoxFit.cover,))));
                 },
                 style: ButtonStyle(
                   overlayColor: MaterialStateProperty.all(Colors.purpleAccent),
