@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:tamuhack2023/models/api_response.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:tamuhack2023/widgets/bulletpoint.dart';
 
 class ResultsPage extends StatelessWidget {
   final ApiResponse data;
@@ -29,6 +30,32 @@ class ResultsPage extends StatelessWidget {
               Text(
                 'Results',
                 style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              CircularPercentIndicator(
+                radius: 100.0,
+                lineWidth: 13.0,
+                percent: data.scoring['total'],
+                center: new Text(
+                  "${(data.scoring['total'] * 100).toStringAsFixed(0)}%",
+                  style: new TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20.0),
+                ),
+                progressColor: health == Health.good
+                    ? Colors.green
+                    : health == Health.acceptable
+                        ? Colors.yellow
+                        : Colors.red,
+              ),
+              Text("Recommendations: ", style: TextStyle(fontSize: 25)),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    BulletPoint(text: "amogus"),
+                    BulletPoint(text: "sussy")
+                  ],
+                ),
               ),
               Text(
                 health == Health.good
