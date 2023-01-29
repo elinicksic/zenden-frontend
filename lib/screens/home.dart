@@ -142,7 +142,12 @@ class _HomeState extends State<Home> {
                           builder: (context) {
                             var avg = 0.0;
                             for (var room in testData) {
-                              avg += room['rs'] as double;
+                              var value = room['rs'] as double;
+                              if (value > 1.0) {
+                                value /= 100;
+                              }
+                              print(value);
+                              avg += value;
                             }
                             avg /= testData.length;
                             print(avg);
@@ -450,61 +455,75 @@ class _HomeState extends State<Home> {
   }
 
   Widget infoBox(double rs, String name, String desc) {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 24),
-          child: CircularPercentIndicator(
-            radius: 50.0,
-            lineWidth: 10.0,
-            animation: true,
-            percent: rs,
-            center: Text(
-              "${(rs * 100).toInt()}%",
-              style:
-                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-            ),
-            footer: const Text(
-              "Room Score",
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
-            ),
-            arcType: ArcType.FULL,
-            circularStrokeCap: CircularStrokeCap.round,
-            progressColor: HSLColor.fromAHSL(1.0, rs * 100, 1.0, 0.5).toColor(),
-            arcBackgroundColor: Colors.black12,
-          ),
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _infoOpened = !_infoOpened;
+        });
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.grey[300],
         ),
-        const SizedBox(
-          width: 20,
-        ),
-        Padding(
-          padding: const EdgeInsets.only(right: 16, top: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width / 2,
-                child: Text(
-                  desc,
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 24),
+              child: CircularPercentIndicator(
+                radius: 50.0,
+                lineWidth: 10.0,
+                animation: true,
+                percent: rs,
+                center: Text(
+                  "${(rs * 100).toInt()}%",
                   style: const TextStyle(
-                    fontSize: 20,
-                  ),
+                      fontWeight: FontWeight.bold, fontSize: 20.0),
                 ),
+                footer: const Text(
+                  "Room Score",
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
+                ),
+                arcType: ArcType.FULL,
+                circularStrokeCap: CircularStrokeCap.round,
+                progressColor:
+                    HSLColor.fromAHSL(1.0, rs * 100, 1.0, 0.5).toColor(),
+                arcBackgroundColor: Colors.black12,
               ),
-            ],
-          ),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 16, top: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: Text(
+                      desc,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
