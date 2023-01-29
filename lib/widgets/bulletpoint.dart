@@ -10,21 +10,24 @@ class BulletPoint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(
-          "\u2022",
-          style: TextStyle(fontSize: 25),
-        ), //bullet text
-        SizedBox(
-          width: 10,
-        ), //space between bullet and text
-        Expanded(
-          child: Text(
-            this.text,
-            style: TextStyle(fontSize: 22.5),
-          ), //text
-        )
-      ]),
+      child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "\u2022",
+              style: TextStyle(fontSize: 25),
+            ), //bullet text
+            SizedBox(
+              width: 10,
+            ), //space between bullet and text
+            Expanded(
+              child: Text(
+                this.text,
+                style: TextStyle(fontSize: 22.5),
+              ), //text
+            )
+          ]),
     );
   }
 }

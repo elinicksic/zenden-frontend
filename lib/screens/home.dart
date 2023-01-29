@@ -36,21 +36,22 @@ class _HomeState extends State<Home> {
   final ImagePicker _picker = ImagePicker();
 
   final testData = [
-    {
-      'id': '1',
-      'img':
-          'https://www.99images.com/photos/architecture/living-room/living-room-livingroomdesign-inspiration-interior2all-2534htlo.jpg?v=1607507822',
-      'rs': 0.7,
-      'name': 'Help',
-      'desc': '',
-    },
+    // {
+    //   'id': '1',
+    //   'img':
+    //       'https://www.99images.com/photos/architecture/living-room/living-room-livingroomdesign-inspiration-interior2all-2534htlo.jpg?v=1607507822',
+    //   'rs': 0.7,
+    //   'name': 'Help',
+    //   'desc': '',
+    // },
     {
       'id': '2',
       'img':
           'https://kentondejong.com/public/images/depressing_places/depress_operating_room.jpg',
       'rs': 0.1,
-      'name': 'Help',
-      'desc': 'I am trapped inside room'
+      'name': 'Dark room',
+      'desc':
+          'Adding a lamp to a dark room can significantly improve the overall ambiance and functionality of the space by providing additional lighting and reducing eye strain.'
     },
     {
       'id': '3',
@@ -68,13 +69,13 @@ class _HomeState extends State<Home> {
       'name': 'Help',
       'desc': 'lol'
     },
-    {
-      'id': '5',
-      'img': 'https://img.sfist.com/attachments/SFist_Jay/apt-sad-mattress.jpg',
-      'rs': 0.4,
-      'name': 'Help',
-      'desc': 'lol'
-    },
+    // {
+    //   'id': '5',
+    //   'img': 'https://img.sfist.com/attachments/SFist_Jay/apt-sad-mattress.jpg',
+    //   'rs': 0.4,
+    //   'name': 'Help',
+    //   'desc': 'lol'
+    // },
     {
       'id': '6',
       'img':
@@ -91,6 +92,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     storage.setItem('rooms', testData);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Container(
@@ -305,8 +307,10 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Scaffold(body: Center(child: CircularProgressIndicator()))
-                                ),
+                                    builder: (context) => const Scaffold(
+                                        body: Center(
+                                            child:
+                                                CircularProgressIndicator()))),
                               );
                               if (image != null) {
                                 // Save temporary file to directory
@@ -350,6 +354,9 @@ class _HomeState extends State<Home> {
                                 source: ImageSource.gallery,
                               );
                               if (image != null) {
+                                Directory appDocDir =
+                                    await getApplicationDocumentsDirectory();
+                                image!.saveTo(appDocDir.path);
                                 final response = await http.post(
                                   _backendUrl,
                                   body: json.encode({
@@ -476,26 +483,32 @@ class _HomeState extends State<Home> {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 24),
-              child: CircularPercentIndicator(
-                radius: 50.0,
-                lineWidth: 10.0,
-                animation: true,
-                percent: rs,
-                center: Text(
-                  "${(rs * 100).toInt()}%",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 20.0),
-                ),
-                footer: const Text(
-                  "Room Score",
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
-                ),
-                arcType: ArcType.FULL,
-                circularStrokeCap: CircularStrokeCap.round,
-                progressColor:
-                    HSLColor.fromAHSL(1.0, rs * 100, 1.0, 0.5).toColor(),
-                arcBackgroundColor: Colors.black12,
-              ),
+              child: Builder(builder: (context) {
+                if (rs > 1.0) {
+                  rs /= 100;
+                }
+                return CircularPercentIndicator(
+                  radius: 50.0,
+                  lineWidth: 10.0,
+                  animation: true,
+                  percent: rs,
+                  center: Text(
+                    "${(rs * 100).toInt()}%",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20.0),
+                  ),
+                  footer: const Text(
+                    "Room Score",
+                    style:
+                        TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
+                  ),
+                  arcType: ArcType.FULL,
+                  circularStrokeCap: CircularStrokeCap.round,
+                  progressColor:
+                      HSLColor.fromAHSL(1.0, rs * 100, 1.0, 0.5).toColor(),
+                  arcBackgroundColor: Colors.black12,
+                );
+              }),
             ),
             const SizedBox(
               width: 20,

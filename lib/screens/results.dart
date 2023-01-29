@@ -172,19 +172,20 @@ class _ResultsPageState extends State<ResultsPage> {
                       Directory appDocDir =
                       await getApplicationDocumentsDirectory();
 
-                      List roomsData =
-                      await storage.getItem('rooms');
-                      print(roomsData);
-                      roomsData.add({
-                        'id': '${roomsData.length + 1}',
-                        'img': appDocDir.path + widget.img.name,
-                        'rs': widget.data.scoring['total'] * 100,
-                        'name': _nameController.text,
-                        'desc': widget.data.recommendations[0]
-                      });
-                      setState(() {
-                        storage.setItem('rooms', roomsData);
-                      });
+                    List<Map<String, Object>> roomsData =
+                        await storage.getItem('rooms');
+                    roomsData.add({
+                      'id': '${roomsData.length + 1}',
+                      'img': appDocDir.path + "/" + widget.img.name,
+                      'rs': widget.data.scoring['total'] * 100,
+                      'name': _nameController.text,
+                      'desc': widget.data.recommendations.length != 0
+                          ? widget.data.recommendations[0]
+                          : "No recommendations :)"
+                    });
+                    setState(() {
+                      storage.setItem('rooms', roomsData);
+                    });
 
                       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Home()),ModalRoute.withName('/screens'));
                     }
