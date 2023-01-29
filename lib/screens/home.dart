@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:tamuhack2023/screens/camera.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../main.dart';
 
@@ -16,6 +17,7 @@ final list = ['Recent Room Captures', 'Bedroom', 'Living Room'];
 class _HomeState extends State<Home> {
   String dropdownValue = list.first;
   bool _flag = false;
+  final ImagePicker _picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
@@ -158,8 +160,8 @@ class _HomeState extends State<Home> {
                     mainAxisSpacing: 10,
                     children: [
                       roomBox('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 0.6, 'Help'),
-                      roomBox('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 0.6, 'Help'),
-                      roomBox('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 0.6, 'Help'),
+                      roomBox('https://t3.ftcdn.net/jpg/03/09/15/38/360_F_309153899_e6oWpcNBV44DEx52vikvw9a5XNlw7pVb.jpg', 0.6, 'Help'),
+                      roomBox('https://media.istockphoto.com/id/1129813604/photo/empty-minimalist-room-with-gray-wall-on-background.jpg?s=612x612&w=0&k=20&c=56EjJTKfoXHWrbPZn9FXt4kWcJf2OwUj6pnh4zFSo6U=', 0.6, 'Help'),
                       roomBox('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 0.6, 'Help'),
                       roomBox('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 0.6, 'Help'),
                       roomBox('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s', 0.6, 'Help'),
@@ -167,12 +169,13 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
+              
               const SizedBox(
                 height: 3,
               ),
               TextButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const App()));
+                onPressed: () async {
+                  final XFile? image = await _picker.pickImage(source: ImageSource.camera);
                 },
                 style: ButtonStyle(
                   overlayColor: MaterialStateProperty.all(Colors.purpleAccent),
@@ -211,21 +214,26 @@ class _HomeState extends State<Home> {
   }
   
   Widget roomBox(String imgSource, double grade, String name) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: const Color.fromRGBO(255, 255, 255, 1),
-        boxShadow: const [BoxShadow(
-          blurRadius: 16,
-          color: Color.fromRGBO(205, 205, 205, 0.5),
-          spreadRadius: 5,
-        )],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.network(
-          imgSource,
-          fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: const Color.fromRGBO(255, 255, 255, 1),
+          boxShadow: const [BoxShadow(
+            blurRadius: 16,
+            color: Color.fromRGBO(205, 205, 205, 0.5),
+            spreadRadius: 5,
+          )],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.network(
+            imgSource,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
