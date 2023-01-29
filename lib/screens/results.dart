@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:tamuhack2023/models/api_response.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:tamuhack2023/widgets/bulletpoint.dart';
 
 import 'dart:io';
 
-class ResultsPage extends StatelessWidget {
+class ResultsPage extends StatefulWidget {
   final ApiResponse data;
   final File img;
   ResultsPage({required this.data, required this.img, super.key});
+
+  @override
+  State<ResultsPage> createState() => _ResultsPageState();
+}
+
+class _ResultsPageState extends State<ResultsPage> {
   Health health = Health.acceptable;
+
   TextEditingController _nameController = TextEditingController();
 
+  final LocalStorage storage = LocalStorage('app.json');
 
   @override
   Widget build(BuildContext context) {
-    if (data.scoring['total'] > 0.7) {
+    if (widget.data.scoring['total'] > 0.7) {
       health = Health.good;
-    } else if (data.scoring['total'] < 0.4) {
+    } else if (widget.data.scoring['total'] < 0.4) {
       health = Health.bad;
-    } else if (data.scoring['total'] < 0.7) {
+    } else if (widget.data.scoring['total'] < 0.7) {
       health = Health.acceptable;
     }
 
@@ -36,7 +45,8 @@ class ResultsPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   GestureDetector(
-                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 30),
+                      child: const Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 30),
                       onTap: () => Navigator.pop(context)),
                   const Spacer(),
                 ],
@@ -52,20 +62,20 @@ class ResultsPage extends StatelessWidget {
                       width: 174,
                       height: 174,
                       child: Image.file(
-                        img, fit: BoxFit.cover,
+                        widget.img,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
                   CircularPercentIndicator(
                     radius: 100.0,
                     lineWidth: 13.0,
-                    percent: data.scoring['total'],
-                    progressColor:
-                      health == Health.good
+                    percent: widget.data.scoring['total'],
+                    progressColor: health == Health.good
                         ? const Color.fromRGBO(30, 195, 55, 1)
                         : health == Health.acceptable
-                        ? const Color.fromRGBO(245, 194, 0, 1)
-                        : const Color.fromRGBO(255, 49, 38, 1),
+                            ? const Color.fromRGBO(245, 194, 0, 1)
+                            : const Color.fromRGBO(255, 49, 38, 1),
                     backgroundColor: Colors.transparent,
                   ),
                 ],
@@ -83,12 +93,9 @@ class ResultsPage extends StatelessWidget {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: Colors.black
-                        ),
+                        borderSide: const BorderSide(color: Colors.black),
                       ),
-                      label: const Text('Room Name')
-                  ),
+                      label: const Text('Room Name')),
                 ),
               ),
               Padding(
@@ -97,53 +104,69 @@ class ResultsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Score: ${(data.scoring['total'] * 100).toStringAsFixed(0)}% - ${health == Health.good
-                          ? 'Good'
-                          : health == Health.bad
-                          ? 'Bad'
-                          : 'Acceptable'}',
+                      'Score: ${(widget.data.scoring['total'] * 100).toStringAsFixed(0)}% - ${health == Health.good ? 'Good' : health == Health.bad ? 'Bad' : 'Acceptable'}',
                       style: const TextStyle(
                           color: Colors.black,
                           fontSize: 28,
-                          fontWeight: FontWeight.bold
-                      ),
+                          fontWeight: FontWeight.bold),
                     ),
                     Text(
-                        "The primary color in the room is ${data.colors["name"]}. ${data.colors["comments"]}"),
+                        "The primary color in the room is ${widget.data.colors["name"]}. ${widget.data.colors["comments"]}"),
                     const SizedBox(
                       height: 10,
                     ),
-                    const Text("Recommendations: ", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500)),
+                    const Text("Recommendations: ",
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.w500)),
                     Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        children: data.recommendations
-                            .map((e) => BulletPoint(text: e))
-                            .toList(),
+                        children: widget.data.recommendations.isNotEmpty
+                            ? widget.data.recommendations
+                                .map((e) => BulletPoint(text: e))
+                                .toList()
+                            : [
+                                const Text(
+                                    "We couldn't make a recommendation for this room :(")
+                              ],
                       ),
                     ),
                   ],
                 ),
               ),
               const Spacer(
-                flex: 10,
+                flex: 11,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 17),
                 child: TextButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    List<Map<String, Object>> roomsData =
+                        await storage.getItem('rooms');
+                    roomsData.add({
+                      'id': '${roomsData.length + 1}',
+                      'img': 'file:///${widget.img.path}',
+                      'rs': widget.data.scoring['total'] * 100,
+                      'name': _nameController.text,
+                      'desc': widget.data.recommendations[0]
+                    });
+                    setState(() {
+                      storage.setItem('rooms', roomsData);
+                    });
 
+                    Navigator.pop(context);
                   },
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.all(
                       health == Health.good
-                        ? Colors.green
-                        : health == Health.acceptable
-                        ? Colors.yellow
-                        : Colors.red,),
-                    backgroundColor:
-                    const MaterialStatePropertyAll<Color>(Colors.transparent),
+                          ? Colors.green
+                          : health == Health.acceptable
+                              ? Colors.yellow
+                              : Colors.red,
+                    ),
+                    backgroundColor: const MaterialStatePropertyAll<Color>(
+                        Colors.transparent),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -151,8 +174,8 @@ class ResultsPage extends StatelessWidget {
                           color: health == Health.good
                               ? Colors.green
                               : health == Health.acceptable
-                              ? Colors.yellow
-                              : Colors.red,
+                                  ? Colors.yellow
+                                  : Colors.red,
                           width: 3,
                         ),
                       ),
@@ -163,14 +186,15 @@ class ResultsPage extends StatelessWidget {
                       const Spacer(),
                       Text(
                         'Add Room',
-                        style: TextStyle(color:
-                          health == Health.good
-                            ? Colors.green
-                            : health == Health.acceptable
-                            ? Colors.yellow
-                            : Colors.red,),
+                        style: TextStyle(
+                          color: health == Health.good
+                              ? Colors.green
+                              : health == Health.acceptable
+                                  ? Colors.yellow
+                                  : Colors.red,
+                        ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                     ],
                   ),
                 ),

@@ -39,17 +39,16 @@ class _HomeState extends State<Home> {
     {
       'id': '1',
       'img':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
-      'rs': 0.6,
+          'https://www.99images.com/photos/architecture/living-room/living-room-livingroomdesign-inspiration-interior2all-2534htlo.jpg?v=1607507822',
+      'rs': 0.7,
       'name': 'Help',
-      'desc':
-          'Lorem ipsum dolor sit amet what an idiot closing the gap from the inside this guy only knows how to start from the front'
+      'desc': ''
     },
     {
       'id': '2',
       'img':
-          'https://t3.ftcdn.net/jpg/03/09/15/38/360_F_309153899_e6oWpcNBV44DEx52vikvw9a5XNlw7pVb.jpg',
-      'rs': 0.4,
+          'https://kentondejong.com/public/images/depressing_places/depress_operating_room.jpg',
+      'rs': 0.1,
       'name': 'Help',
       'desc': 'I am trapped inside room'
     },
@@ -64,15 +63,14 @@ class _HomeState extends State<Home> {
     {
       'id': '4',
       'img':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
+          'https://st.depositphotos.com/2501519/2970/v/450/depositphotos_29700139-Depression-man-in-empty-room.jpg',
       'rs': 0.2,
       'name': 'Help',
       'desc': 'lol'
     },
     {
       'id': '5',
-      'img':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
+      'img': 'https://img.sfist.com/attachments/SFist_Jay/apt-sad-mattress.jpg',
       'rs': 0.4,
       'name': 'Help',
       'desc': 'lol'
@@ -80,8 +78,8 @@ class _HomeState extends State<Home> {
     {
       'id': '6',
       'img':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
-      'rs': 0.5,
+          'https://trendesignbook.com/blog/wp-content/uploads/2020/10/nature-inspired-trends.jpg',
+      'rs': 0.9,
       'name': 'Help',
       'desc': 'lol'
     },
@@ -124,18 +122,14 @@ class _HomeState extends State<Home> {
                             Text(
                               'Welcome',
                               style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold
-                              ),
+                                  fontSize: 22, fontWeight: FontWeight.bold),
                             ),
                             FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
                                 'Home',
                                 style: TextStyle(
-                                    fontSize: 44,
-                                    fontWeight: FontWeight.w300
-                                ),
+                                    fontSize: 44, fontWeight: FontWeight.w300),
                               ),
                             )
                           ],
@@ -170,7 +164,9 @@ class _HomeState extends State<Home> {
                               ),
                               arcType: ArcType.FULL,
                               circularStrokeCap: CircularStrokeCap.round,
-                              progressColor: HSLColor.fromAHSL(1.0, avg * 100, 1.0, 0.5).toColor(),
+                              progressColor:
+                                  HSLColor.fromAHSL(1.0, avg * 100, 1.0, 0.5)
+                                      .toColor(),
                               arcBackgroundColor: Colors.black12,
                             );
                           },
@@ -279,72 +275,80 @@ class _HomeState extends State<Home> {
               TextButton(
                 onPressed: () async {
                   late XFile? image;
-                  showDialog(context: context, builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Image Source'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('Camera'),
-                          onPressed: () async {
-                            image = await _picker.pickImage(source: ImageSource.camera);
-                            if(image!=null) {
-                              final response = await http.post(
-                                _backendUrl,
-                                body: json.encode({
-                                  "room_type": "Bedroom",
-                                  "image": base64Encode(await image!.readAsBytes()),
-                                }),
-                                headers: {
-                                  'Content-type': 'application/json',
-                                  'Accept': 'application/json',
-                                },
-                              ).then((Response response) {
-                                final data =
-                                ApiResponse.fromJson(jsonDecode(response.body));
-                                print("IM SO SUS");
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ResultsPage(data: data, img: File(image!.path)),
-                                  ),
-                                );
-                              });
-                            }
-                          },
-                        ),
-                        TextButton(
-                          child: const Text('Storage'),
-                          onPressed: () async {
-                            image = await _picker.pickImage(source: ImageSource.gallery);
-                            if(image!=null) {
-                              final response = await http.post(
-                                _backendUrl,
-                                body: json.encode({
-                                  "room_type": "Bedroom",
-                                  "image": base64Encode(await image!.readAsBytes()),
-                                }),
-                                headers: {
-                                  'Content-type': 'application/json',
-                                  'Accept': 'application/json',
-                                },
-                              ).then((Response response) {
-                                final data =
-                                ApiResponse.fromJson(jsonDecode(response.body));
-                                print("IM SO SUS");
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ResultsPage(data: data, img: File(image!.path)),
-                                  ),
-                                );
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    );
-                  });
-
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Image Source'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Camera'),
+                            onPressed: () async {
+                              image = await _picker.pickImage(
+                                  source: ImageSource.camera);
+                              if (image != null) {
+                                final response = await http.post(
+                                  _backendUrl,
+                                  body: json.encode({
+                                    "room_type": "Bedroom",
+                                    "image": base64Encode(
+                                        await image!.readAsBytes()),
+                                  }),
+                                  headers: {
+                                    'Content-type': 'application/json',
+                                    'Accept': 'application/json',
+                                  },
+                                ).then((Response response) {
+                                  final data = ApiResponse.fromJson(
+                                      jsonDecode(response.body));
+                                  print("IM SO SUS");
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ResultsPage(
+                                          data: data, img: File(image!.path)),
+                                    ),
+                                  );
+                                });
+                              }
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Storage'),
+                            onPressed: () async {
+                              image = await _picker.pickImage(
+                                  source: ImageSource.gallery);
+                              if (image != null) {
+                                final response = await http.post(
+                                  _backendUrl,
+                                  body: json.encode({
+                                    "room_type": "Bedroom",
+                                    "image": base64Encode(
+                                        await image!.readAsBytes()),
+                                  }),
+                                  headers: {
+                                    'Content-type': 'application/json',
+                                    'Accept': 'application/json',
+                                  },
+                                ).then((Response response) {
+                                  final data = ApiResponse.fromJson(
+                                      jsonDecode(response.body));
+                                  print("IM SO SUS");
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ResultsPage(
+                                          data: data, img: File(image!.path)),
+                                    ),
+                                  );
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
 
                   // ignore: use_build_context_synchronously
                 },
