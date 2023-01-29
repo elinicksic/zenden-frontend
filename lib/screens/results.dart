@@ -1,16 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tamuhack2023/models/api_response.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:tamuhack2023/widgets/bulletpoint.dart';
 
-import 'dart:io';
-
 class ResultsPage extends StatefulWidget {
   final ApiResponse data;
-  final File img;
+  final XFile img;
   ResultsPage({required this.data, required this.img, super.key});
 
   @override
@@ -62,7 +62,7 @@ class _ResultsPageState extends State<ResultsPage> {
                       width: 174,
                       height: 174,
                       child: Image.file(
-                        widget.img,
+                        File(widget.img.path),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -142,11 +142,15 @@ class _ResultsPageState extends State<ResultsPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 17),
                 child: TextButton(
                   onPressed: () async {
+                    // Save temporary file to directory
+                    Directory appDocDir =
+                        await getApplicationDocumentsDirectory();
+
                     List<Map<String, Object>> roomsData =
                         await storage.getItem('rooms');
                     roomsData.add({
                       'id': '${roomsData.length + 1}',
-                      'img': 'file:///${widget.img.path}',
+                      'img': appDocDir.path + widget.img.name,
                       'rs': widget.data.scoring['total'] * 100,
                       'name': _nameController.text,
                       'desc': widget.data.recommendations[0]

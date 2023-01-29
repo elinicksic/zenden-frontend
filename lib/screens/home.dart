@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -9,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:tamuhack2023/screens/results.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/api_response.dart';
 
 final _backendUrl =
@@ -21,7 +21,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-final list = ['Recent Room Captures', 'Bedroom', 'Living Room'];
+final list = ['All', 'Good', 'Acceptable', 'Bad'];
 
 class _HomeState extends State<Home> {
   String dropdownValue = list.first;
@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
           'https://www.99images.com/photos/architecture/living-room/living-room-livingroomdesign-inspiration-interior2all-2534htlo.jpg?v=1607507822',
       'rs': 0.7,
       'name': 'Help',
-      'desc': ''
+      'desc': '',
     },
     {
       'id': '2',
@@ -145,6 +145,7 @@ class _HomeState extends State<Home> {
                               avg += room['rs'] as double;
                             }
                             avg /= testData.length;
+                            print(avg);
                             return CircularPercentIndicator(
                               radius: 60.0,
                               lineWidth: 13.0,
@@ -236,22 +237,32 @@ class _HomeState extends State<Home> {
                     builder: (BuildContext context, snapshot) {
                       if (snapshot.data == true) {
                         List<dynamic> data = storage.getItem('rooms') ?? [];
-                        print(data);
+
+                        List<Widget> gridList = [];
+
+                        for (var room in testData) {
+                          final rs = room['rs'] as double;
+                          if ((dropdownValue == 'Good' && rs > 0.7) ||
+                              (dropdownValue == 'Bad' && rs < 0.4) ||
+                              (dropdownValue == 'Acceptable' &&
+                                  0.4 < rs &&
+                                  rs < 0.7) ||
+                              dropdownValue == 'All') {
+                            gridList.add(roomBox(
+                                room['id'] as String,
+                                room['img'] as String,
+                                room['rs'] as double,
+                                room['name'] as String,
+                                room['desc'] as String));
+                          }
+                        }
 
                         return GridView.count(
                           padding: const EdgeInsets.all(0),
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
-                          children: [
-                            for (var room in data)
-                              roomBox(
-                                  room['id'] as String,
-                                  room['img'] as String,
-                                  room['rs'] as double,
-                                  room['name'] as String,
-                                  room['desc'] as String)
-                          ],
+                          children: gridList,
                         );
                       } else {
                         return const Center(child: CircularProgressIndicator());
@@ -287,12 +298,18 @@ class _HomeState extends State<Home> {
                               image = await _picker.pickImage(
                                   source: ImageSource.camera);
                               if (image != null) {
+                                // Save temporary file to directory
+                                Directory appDocDir =
+                                    await getApplicationDocumentsDirectory();
+                                image!.saveTo(appDocDir.path);
+
                                 final response = await http.post(
                                   _backendUrl,
                                   body: json.encode({
                                     "room_type": "Bedroom",
                                     "image": base64Encode(
-                                        await image!.readAsBytes()),
+                                      await image!.readAsBytes(),
+                                    ),
                                   }),
                                   headers: {
                                     'Content-type': 'application/json',
@@ -300,13 +317,15 @@ class _HomeState extends State<Home> {
                                   },
                                 ).then((Response response) {
                                   final data = ApiResponse.fromJson(
-                                      jsonDecode(response.body));
-                                  print("IM SO SUS");
+                                    jsonDecode(response.body),
+                                  );
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ResultsPage(
-                                          data: data, img: File(image!.path)),
+                                        data: data,
+                                        img: image!,
+                                      ),
                                     ),
                                   );
                                 });
@@ -317,14 +336,16 @@ class _HomeState extends State<Home> {
                             child: const Text('Storage'),
                             onPressed: () async {
                               image = await _picker.pickImage(
-                                  source: ImageSource.gallery);
+                                source: ImageSource.gallery,
+                              );
                               if (image != null) {
                                 final response = await http.post(
                                   _backendUrl,
                                   body: json.encode({
                                     "room_type": "Bedroom",
                                     "image": base64Encode(
-                                        await image!.readAsBytes()),
+                                      await image!.readAsBytes(),
+                                    ),
                                   }),
                                   headers: {
                                     'Content-type': 'application/json',
@@ -332,13 +353,15 @@ class _HomeState extends State<Home> {
                                   },
                                 ).then((Response response) {
                                   final data = ApiResponse.fromJson(
-                                      jsonDecode(response.body));
-                                  print("IM SO SUS");
+                                    jsonDecode(response.body),
+                                  );
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ResultsPage(
-                                          data: data, img: File(image!.path)),
+                                        data: data,
+                                        img: image!,
+                                      ),
                                     ),
                                   );
                                 });
@@ -415,10 +438,12 @@ class _HomeState extends State<Home> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.network(
-            imgSource,
-            fit: BoxFit.cover,
-          ),
+          child: imgSource.startsWith("http")
+              ? Image.network(
+                  imgSource,
+                  fit: BoxFit.cover,
+                )
+              : Image.file(File(imgSource)),
         ),
       ),
     );
