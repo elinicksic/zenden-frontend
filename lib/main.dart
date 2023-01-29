@@ -86,7 +86,7 @@ class _AppState extends State<App> {
                 padding: EdgeInsets.only(
                   top: (MediaQuery.of(context).size.longestSide -
                           _controller.value.previewSize!.longestSide) /
-                      3,
+                      4,
                 ),
                 // padding: orientation == Orientation.portrait
                 //     ? const EdgeInsets.only(top: 75)
@@ -112,7 +112,7 @@ class _AppState extends State<App> {
                     ? Alignment.bottomCenter
                     : Alignment.centerRight,
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(32.0),
                   child: GestureDetector(
                     // Capture a photo and moves to the next screen
                     onTap: () async {
