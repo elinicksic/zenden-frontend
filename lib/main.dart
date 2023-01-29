@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
 import 'package:tamuhack2023/logging.dart';
-import 'package:tamuhack2023/screens/camera.dart';
 import 'package:tamuhack2023/screens/home.dart';
 
 List<CameraDescription> _cameras = <CameraDescription>[];
@@ -69,6 +68,6 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return CameraScreen(camera: camera);
+    return Home();
   }
 }
