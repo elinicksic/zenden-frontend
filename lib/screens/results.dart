@@ -12,7 +12,12 @@ import 'package:tamuhack2023/widgets/bulletpoint.dart';
 class ResultsPage extends StatefulWidget {
   final ApiResponse data;
   final XFile img;
-  ResultsPage({required this.data, required this.img, super.key});
+  final LocalStorage storage;
+  const ResultsPage(
+      {required this.data,
+      required this.img,
+      required this.storage,
+      super.key});
 
   @override
   State<ResultsPage> createState() => _ResultsPageState();
@@ -22,8 +27,6 @@ class _ResultsPageState extends State<ResultsPage> {
   Health health = Health.acceptable;
 
   TextEditingController _nameController = TextEditingController();
-
-  final LocalStorage storage = LocalStorage('app.json');
 
   @override
   Widget build(BuildContext context) {
@@ -171,19 +174,17 @@ class _ResultsPageState extends State<ResultsPage> {
                       await getApplicationDocumentsDirectory();
 
                     List<Map<String, Object>> roomsData =
-                        await storage.getItem('rooms');
+                        await widget.storage.getItem('rooms');
                     roomsData.add({
                       'id': '${roomsData.length + 1}',
-                      'img': appDocDir.path + "/" + widget.img.name,
+                      'img': "${appDocDir.path}/${widget.img.name}",
                       'rs': widget.data.scoring['total'] * 100,
                       'name': _nameController.text,
-                      'desc': widget.data.recommendations.length != 0
+                      'desc': widget.data.recommendations.isNotEmpty
                           ? widget.data.recommendations[0]
                           : "No recommendations :)"
                     });
-                    setState(() {
-                      storage.setItem('rooms', roomsData);
-                    });
+                    await widget.storage.setItem('rooms', roomsData);
 
                       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Home()),ModalRoute.withName('/screens'));
                     }

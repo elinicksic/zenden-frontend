@@ -36,14 +36,14 @@ class _HomeState extends State<Home> {
   final ImagePicker _picker = ImagePicker();
 
   final testData = [
-    // {
-    //   'id': '1',
-    //   'img':
-    //       'https://www.99images.com/photos/architecture/living-room/living-room-livingroomdesign-inspiration-interior2all-2534htlo.jpg?v=1607507822',
-    //   'rs': 0.7,
-    //   'name': 'Help',
-    //   'desc': '',
-    // },
+    {
+      'id': '1',
+      'img':
+          'https://www.99images.com/photos/architecture/living-room/living-room-livingroomdesign-inspiration-interior2all-2534htlo.jpg?v=1607507822',
+      'rs': 0.7,
+      'name': 'Help',
+      'desc': '',
+    },
     {
       'id': '2',
       'img':
@@ -69,13 +69,13 @@ class _HomeState extends State<Home> {
       'name': 'Help',
       'desc': 'lol'
     },
-    // {
-    //   'id': '5',
-    //   'img': 'https://img.sfist.com/attachments/SFist_Jay/apt-sad-mattress.jpg',
-    //   'rs': 0.4,
-    //   'name': 'Help',
-    //   'desc': 'lol'
-    // },
+    {
+      'id': '5',
+      'img': 'https://img.sfist.com/attachments/SFist_Jay/apt-sad-mattress.jpg',
+      'rs': 0.4,
+      'name': 'Help',
+      'desc': 'lol'
+    },
     {
       'id': '6',
       'img':
@@ -90,7 +90,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    storage.setItem('rooms', testData);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SizedBox(
@@ -307,17 +306,19 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Scaffold(
-                                        body: Center(
-                                            child:
-                                                CircularProgressIndicator()))),
+                                  builder: (context) => const Scaffold(
+                                    body: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                ),
                               );
                               if (image != null) {
                                 // Save temporary file to directory
                                 Directory appDocDir =
                                     await getApplicationDocumentsDirectory();
-                                image!.saveTo(appDocDir.path);
-
+                                await image!
+                                    .saveTo("${appDocDir.path}/${image!.name}");
                                 final response = await http.post(
                                   _backendUrl,
                                   body: json.encode({
@@ -330,20 +331,23 @@ class _HomeState extends State<Home> {
                                     'Content-type': 'application/json',
                                     'Accept': 'application/json',
                                   },
-                                ).then((Response response) {
-                                  final data = ApiResponse.fromJson(
-                                    jsonDecode(response.body),
-                                  );
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ResultsPage(
-                                        data: data,
-                                        img: image!,
+                                ).then(
+                                  (Response response) {
+                                    final data = ApiResponse.fromJson(
+                                      jsonDecode(response.body),
+                                    );
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ResultsPage(
+                                          data: data,
+                                          img: image!,
+                                          storage: storage,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                });
+                                    );
+                                  },
+                                );
                               }
                             },
                           ),
@@ -353,10 +357,21 @@ class _HomeState extends State<Home> {
                               image = await _picker.pickImage(
                                 source: ImageSource.gallery,
                               );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const Scaffold(
+                                    body: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                ),
+                              );
                               if (image != null) {
                                 Directory appDocDir =
                                     await getApplicationDocumentsDirectory();
-                                image!.saveTo(appDocDir.path);
+                                await image!
+                                    .saveTo("${appDocDir.path}/${image!.name}");
                                 final response = await http.post(
                                   _backendUrl,
                                   body: json.encode({
@@ -377,9 +392,9 @@ class _HomeState extends State<Home> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ResultsPage(
-                                        data: data,
-                                        img: image!,
-                                      ),
+                                          data: data,
+                                          img: image!,
+                                          storage: storage),
                                     ),
                                   );
                                 });
