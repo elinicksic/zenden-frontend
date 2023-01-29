@@ -6,6 +6,7 @@ import 'package:camera/camera.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:tamuhack2023/logging.dart';
+import 'package:tamuhack2023/models/api_response.dart';
 import 'package:tamuhack2023/screens/camera.dart';
 import 'package:tamuhack2023/utils.dart';
 
@@ -118,17 +119,14 @@ class _AppState extends State<App> {
                         // Attempt to take a picture and get the file `image`
                         // where it was saved.
                         final image = await _controller.takePicture();
-                        print(
-                            "\n\n\n\n\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n\n\n\n");
 
-                        var response = await http.post(
+                        final response = await http.post(
                           backendUrl,
-                          headers: {"Access-Control-Allow-Origin": "*"},
                           body: base64Encode(await image.readAsBytes()),
                         );
-                        print(
-                            "\n\n\n\n\nBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n\n\n\n\n");
-                        print(response.body);
+
+                        final data =
+                            ApiResponse.fromJson(jsonDecode(response.body));
                       } catch (e) {
                         // If an error occurs, log the error to the console.
                         print(e);
