@@ -1,6 +1,6 @@
 class ApiResponse {
-  final List<String> objects;
-  final List<String> colors;
+  final List<dynamic> objects;
+  final List<dynamic> colors;
 
   const ApiResponse({required this.objects, required this.colors});
 

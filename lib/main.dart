@@ -83,7 +83,11 @@ class _AppState extends State<App> {
             // Display the camera
             OrientationBuilder(builder: (context, orientation) {
               return Padding(
-                padding: const EdgeInsets.only(top: 75),
+                padding: EdgeInsets.only(
+                  top: (MediaQuery.of(context).size.longestSide -
+                          _controller.value.previewSize!.longestSide) /
+                      3,
+                ),
                 // padding: orientation == Orientation.portrait
                 //     ? const EdgeInsets.only(top: 75)
                 //     : const EdgeInsets.only(left: 75),
@@ -131,10 +135,10 @@ class _AppState extends State<App> {
                         // If an error occurs, log the error to the console.
                         print(e);
                       }
-                      print('test');
                     },
 
                     // Add feedback on tap
+                    // TODO: tap animation
                     onTapDown: (details) {
                       print('down');
                     },
