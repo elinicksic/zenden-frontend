@@ -13,7 +13,7 @@ class BulletPoint extends StatelessWidget {
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(
           "\u2022",
-          style: TextStyle(fontSize: 30),
+          style: TextStyle(fontSize: 25),
         ), //bullet text
         SizedBox(
           width: 10,

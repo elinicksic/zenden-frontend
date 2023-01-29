@@ -27,6 +27,14 @@ class ResultsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                      child: Icon(Icons.arrow_back_ios_new_rounded, size: 30),
+                      onTap: () => Navigator.pop(context))
+                ],
+              ),
               Text(
                 'Results',
                 style: Theme.of(context).textTheme.headlineMedium,
@@ -46,17 +54,6 @@ class ResultsPage extends StatelessWidget {
                         ? Colors.yellow
                         : Colors.red,
               ),
-              Text("Recommendations: ", style: TextStyle(fontSize: 25)),
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    BulletPoint(text: "amogus"),
-                    BulletPoint(text: "sussy")
-                  ],
-                ),
-              ),
               Text(
                 health == Health.good
                     ? 'Good'
@@ -70,6 +67,18 @@ class ResultsPage extends StatelessWidget {
                             ? Colors.yellow
                             : Colors.red,
                     fontSize: 35),
+              ),
+              Text(
+                  "The primary color in the room is ${data.colors["name"]}, ${data.colors["comments"]}"),
+              Text("Recommendations: ", style: TextStyle(fontSize: 25)),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: data.recommendations
+                      .map((e) => BulletPoint(text: e))
+                      .toList(),
+                ),
               ),
             ],
           ),
