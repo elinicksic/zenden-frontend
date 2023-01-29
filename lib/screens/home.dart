@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -9,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:tamuhack2023/screens/results.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/api_response.dart';
 
 final _backendUrl =
@@ -21,7 +21,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-final list = ['Recent Room Captures', 'Bedroom', 'Living Room'];
+final list = ['All', 'Good', 'Acceptable', 'Bad'];
 
 class _HomeState extends State<Home> {
   String dropdownValue = list.first;
@@ -39,17 +39,16 @@ class _HomeState extends State<Home> {
     {
       'id': '1',
       'img':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
-      'rs': 0.6,
+          'https://www.99images.com/photos/architecture/living-room/living-room-livingroomdesign-inspiration-interior2all-2534htlo.jpg?v=1607507822',
+      'rs': 0.7,
       'name': 'Help',
-      'desc':
-          'Lorem ipsum dolor sit amet what an idiot closing the gap from the inside this guy only knows how to start from the front'
+      'desc': '',
     },
     {
       'id': '2',
       'img':
-          'https://t3.ftcdn.net/jpg/03/09/15/38/360_F_309153899_e6oWpcNBV44DEx52vikvw9a5XNlw7pVb.jpg',
-      'rs': 0.4,
+          'https://kentondejong.com/public/images/depressing_places/depress_operating_room.jpg',
+      'rs': 0.1,
       'name': 'Help',
       'desc': 'I am trapped inside room'
     },
@@ -64,15 +63,14 @@ class _HomeState extends State<Home> {
     {
       'id': '4',
       'img':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
+          'https://st.depositphotos.com/2501519/2970/v/450/depositphotos_29700139-Depression-man-in-empty-room.jpg',
       'rs': 0.2,
       'name': 'Help',
       'desc': 'lol'
     },
     {
       'id': '5',
-      'img':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
+      'img': 'https://img.sfist.com/attachments/SFist_Jay/apt-sad-mattress.jpg',
       'rs': 0.4,
       'name': 'Help',
       'desc': 'lol'
@@ -80,8 +78,8 @@ class _HomeState extends State<Home> {
     {
       'id': '6',
       'img':
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
-      'rs': 0.5,
+          'https://trendesignbook.com/blog/wp-content/uploads/2020/10/nature-inspired-trends.jpg',
+      'rs': 0.9,
       'name': 'Help',
       'desc': 'lol'
     },
@@ -124,18 +122,14 @@ class _HomeState extends State<Home> {
                             Text(
                               'Welcome',
                               style: TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold
-                              ),
+                                  fontSize: 22, fontWeight: FontWeight.bold),
                             ),
                             FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
                                 'Home',
                                 style: TextStyle(
-                                    fontSize: 44,
-                                    fontWeight: FontWeight.w300
-                                ),
+                                    fontSize: 44, fontWeight: FontWeight.w300),
                               ),
                             )
                           ],
@@ -151,6 +145,7 @@ class _HomeState extends State<Home> {
                               avg += room['rs'] as double;
                             }
                             avg /= testData.length;
+                            print(avg);
                             return CircularPercentIndicator(
                               radius: 60.0,
                               lineWidth: 13.0,
@@ -170,7 +165,9 @@ class _HomeState extends State<Home> {
                               ),
                               arcType: ArcType.FULL,
                               circularStrokeCap: CircularStrokeCap.round,
-                              progressColor: HSLColor.fromAHSL(1.0, avg * 100, 1.0, 0.5).toColor(),
+                              progressColor:
+                                  HSLColor.fromAHSL(1.0, avg * 100, 1.0, 0.5)
+                                      .toColor(),
                               arcBackgroundColor: Colors.black12,
                             );
                           },
@@ -240,22 +237,32 @@ class _HomeState extends State<Home> {
                     builder: (BuildContext context, snapshot) {
                       if (snapshot.data == true) {
                         List<dynamic> data = storage.getItem('rooms') ?? [];
-                        print(data);
+
+                        List<Widget> gridList = [];
+
+                        for (var room in testData) {
+                          final rs = room['rs'] as double;
+                          if ((dropdownValue == 'Good' && rs > 0.7) ||
+                              (dropdownValue == 'Bad' && rs < 0.4) ||
+                              (dropdownValue == 'Acceptable' &&
+                                  0.4 < rs &&
+                                  rs < 0.7) ||
+                              dropdownValue == 'All') {
+                            gridList.add(roomBox(
+                                room['id'] as String,
+                                room['img'] as String,
+                                room['rs'] as double,
+                                room['name'] as String,
+                                room['desc'] as String));
+                          }
+                        }
 
                         return GridView.count(
                           padding: const EdgeInsets.all(0),
                           crossAxisCount: 2,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
-                          children: [
-                            for (var room in data)
-                              roomBox(
-                                  room['id'] as String,
-                                  room['img'] as String,
-                                  room['rs'] as double,
-                                  room['name'] as String,
-                                  room['desc'] as String)
-                          ],
+                          children: gridList,
                         );
                       } else {
                         return const Center(child: CircularProgressIndicator());
@@ -279,72 +286,92 @@ class _HomeState extends State<Home> {
               TextButton(
                 onPressed: () async {
                   late XFile? image;
-                  showDialog(context: context, builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Image Source'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('Camera'),
-                          onPressed: () async {
-                            image = await _picker.pickImage(source: ImageSource.camera);
-                            if(image!=null) {
-                              final response = await http.post(
-                                _backendUrl,
-                                body: json.encode({
-                                  "room_type": "Bedroom",
-                                  "image": base64Encode(await image!.readAsBytes()),
-                                }),
-                                headers: {
-                                  'Content-type': 'application/json',
-                                  'Accept': 'application/json',
-                                },
-                              ).then((Response response) {
-                                final data =
-                                ApiResponse.fromJson(jsonDecode(response.body));
-                                print("IM SO SUS");
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ResultsPage(data: data, img: File(image!.path)),
-                                  ),
-                                );
-                              });
-                            }
-                          },
-                        ),
-                        TextButton(
-                          child: const Text('Storage'),
-                          onPressed: () async {
-                            image = await _picker.pickImage(source: ImageSource.gallery);
-                            if(image!=null) {
-                              final response = await http.post(
-                                _backendUrl,
-                                body: json.encode({
-                                  "room_type": "Bedroom",
-                                  "image": base64Encode(await image!.readAsBytes()),
-                                }),
-                                headers: {
-                                  'Content-type': 'application/json',
-                                  'Accept': 'application/json',
-                                },
-                              ).then((Response response) {
-                                final data =
-                                ApiResponse.fromJson(jsonDecode(response.body));
-                                print("IM SO SUS");
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ResultsPage(data: data, img: File(image!.path)),
-                                  ),
-                                );
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    );
-                  });
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Image Source'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Camera'),
+                            onPressed: () async {
+                              image = await _picker.pickImage(
+                                  source: ImageSource.camera);
+                              if (image != null) {
+                                // Save temporary file to directory
+                                Directory appDocDir =
+                                    await getApplicationDocumentsDirectory();
+                                image!.saveTo(appDocDir.path);
 
+                                final response = await http.post(
+                                  _backendUrl,
+                                  body: json.encode({
+                                    "room_type": "Bedroom",
+                                    "image": base64Encode(
+                                      await image!.readAsBytes(),
+                                    ),
+                                  }),
+                                  headers: {
+                                    'Content-type': 'application/json',
+                                    'Accept': 'application/json',
+                                  },
+                                ).then((Response response) {
+                                  final data = ApiResponse.fromJson(
+                                    jsonDecode(response.body),
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ResultsPage(
+                                        data: data,
+                                        img: image!,
+                                      ),
+                                    ),
+                                  );
+                                });
+                              }
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Storage'),
+                            onPressed: () async {
+                              image = await _picker.pickImage(
+                                source: ImageSource.gallery,
+                              );
+                              if (image != null) {
+                                final response = await http.post(
+                                  _backendUrl,
+                                  body: json.encode({
+                                    "room_type": "Bedroom",
+                                    "image": base64Encode(
+                                      await image!.readAsBytes(),
+                                    ),
+                                  }),
+                                  headers: {
+                                    'Content-type': 'application/json',
+                                    'Accept': 'application/json',
+                                  },
+                                ).then((Response response) {
+                                  final data = ApiResponse.fromJson(
+                                    jsonDecode(response.body),
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ResultsPage(
+                                        data: data,
+                                        img: image!,
+                                      ),
+                                    ),
+                                  );
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
 
                   // ignore: use_build_context_synchronously
                 },
@@ -411,10 +438,12 @@ class _HomeState extends State<Home> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: Image.network(
-            imgSource,
-            fit: BoxFit.cover,
-          ),
+          child: imgSource.startsWith("http")
+              ? Image.network(
+                  imgSource,
+                  fit: BoxFit.cover,
+                )
+              : Image.file(File(imgSource)),
         ),
       ),
     );
