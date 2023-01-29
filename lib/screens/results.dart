@@ -156,10 +156,12 @@ class _ResultsPageState extends State<ResultsPage> {
                         await storage.getItem('rooms');
                     roomsData.add({
                       'id': '${roomsData.length + 1}',
-                      'img': appDocDir.path + widget.img.name,
+                      'img': appDocDir.path + "/" + widget.img.name,
                       'rs': widget.data.scoring['total'] * 100,
                       'name': _nameController.text,
-                      'desc': widget.data.recommendations[0]
+                      'desc': widget.data.recommendations.length != 0
+                          ? widget.data.recommendations[0]
+                          : "No recommendations :)"
                     });
                     setState(() {
                       storage.setItem('rooms', roomsData);
