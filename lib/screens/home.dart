@@ -302,6 +302,12 @@ class _HomeState extends State<Home> {
                             onPressed: () async {
                               image = await _picker.pickImage(
                                   source: ImageSource.camera);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const Scaffold(body: Center(child: CircularProgressIndicator()))
+                                ),
+                              );
                               if (image != null) {
                                 // Save temporary file to directory
                                 Directory appDocDir =
