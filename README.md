@@ -1,16 +1,8 @@
-# tamuhack2023
+# ZenDen Frontend
+*Better your mental health, starting at your room.*
 
-A new Flutter project.
+### TAMUhack 2023 Submission
 
-## Getting Started
+* [Devpost](https://devpost.com/software/room-design-mental-health)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* [Backend](https://github.com/elinickisc/zenden-backend)
