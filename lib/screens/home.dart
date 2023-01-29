@@ -6,8 +6,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:tamuhack2023/screens/results.dart';
-
-import '../main.dart';
+import 'package:localstorage/localstorage.dart';
 import '../models/api_response.dart';
 
 final _backendUrl =
@@ -25,10 +24,72 @@ final list = ['Recent Room Captures', 'Bedroom', 'Living Room'];
 class _HomeState extends State<Home> {
   String dropdownValue = list.first;
   bool _flag = false;
+  bool _infoOpened = false;
+  Map _infoString = {
+    'id': null,
+    'name': null,
+    'desc': null,
+    'rs': null,
+  };
   final ImagePicker _picker = ImagePicker();
+
+  final testData = [
+    {
+      'id': '1',
+      'img':
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
+      'rs': 0.6,
+      'name': 'Help',
+      'desc':
+          'Lorem ipsum dolor sit amet what an idiot closing the gap from the inside this guy only knows how to start from the front'
+    },
+    {
+      'id': '2',
+      'img':
+          'https://t3.ftcdn.net/jpg/03/09/15/38/360_F_309153899_e6oWpcNBV44DEx52vikvw9a5XNlw7pVb.jpg',
+      'rs': 0.4,
+      'name': 'Help',
+      'desc': 'I am trapped inside room'
+    },
+    {
+      'id': '3',
+      'img':
+          'https://media.istockphoto.com/id/1129813604/photo/empty-minimalist-room-with-gray-wall-on-background.jpg?s=612x612&w=0&k=20&c=56EjJTKfoXHWrbPZn9FXt4kWcJf2OwUj6pnh4zFSo6U=',
+      'rs': 0.6,
+      'name': 'Help',
+      'desc': 'lol'
+    },
+    {
+      'id': '4',
+      'img':
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
+      'rs': 0.2,
+      'name': 'Help',
+      'desc': 'lol'
+    },
+    {
+      'id': '5',
+      'img':
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
+      'rs': 0.4,
+      'name': 'Help',
+      'desc': 'lol'
+    },
+    {
+      'id': '6',
+      'img':
+          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
+      'rs': 0.5,
+      'name': 'Help',
+      'desc': 'lol'
+    },
+  ];
+
+  final LocalStorage storage = LocalStorage('app.json');
 
   @override
   Widget build(BuildContext context) {
+    storage.setItem('rooms', testData);
     return Scaffold(
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
@@ -39,71 +100,89 @@ class _HomeState extends State<Home> {
               AspectRatio(
                 aspectRatio: 2,
                 child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: const Color.fromRGBO(255, 255, 255, 1),
-                      boxShadow: const [
-                        BoxShadow(
-                          blurRadius: 16,
-                          color: Color.fromRGBO(205, 205, 205, 0.5),
-                          spreadRadius: 5,
-                        )
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16, bottom: 24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Text(
-                                'Welcome Home',
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              SizedBox(
-                                width: 150,
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    'James May',
-                                    style: TextStyle(
-                                        fontSize: 44,
-                                        fontWeight: FontWeight.w300),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: const Color.fromRGBO(255, 255, 255, 1),
+                    boxShadow: const [
+                      BoxShadow(
+                        blurRadius: 16,
+                        color: Color.fromRGBO(205, 205, 205, 0.5),
+                        spreadRadius: 5,
+                      )
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16, bottom: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              'Welcome Home',
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(
+                              width: 150,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  'James May',
+                                  style: TextStyle(
+                                    fontSize: 44,
+                                    fontWeight: FontWeight.w300,
                                   ),
                                 ),
-                              )
-                            ],
-                          ),
+                              ),
+                            )
+                          ],
                         ),
-                        const Spacer(),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 24),
-                          child: CircularPercentIndicator(
-                            radius: 60.0,
-                            lineWidth: 13.0,
-                            animation: true,
-                            percent: 0.7,
-                            center: const Text(
-                              "70.0%",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 20.0),
-                            ),
-                            footer: const Text(
-                              "Average Room Score",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 14.0),
-                            ),
-                            arcType: ArcType.FULL,
-                            circularStrokeCap: CircularStrokeCap.round,
-                            progressColor: Colors.purple,
-                            arcBackgroundColor: Colors.black12,
-                          ),
+                      ),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 24),
+                        child: Builder(
+                          builder: (context) {
+                            var avg = 0.0;
+                            for (var room in testData) {
+                              avg += room['rs'] as double;
+                            }
+                            avg /= testData.length;
+                            return CircularPercentIndicator(
+                              radius: 60.0,
+                              lineWidth: 13.0,
+                              animation: true,
+                              percent: avg,
+                              center: Text(
+                                "${(avg * 100).toInt()}%",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20.0),
+                              ),
+                              footer: const Text(
+                                "Room Score",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14.0),
+                              ),
+                              arcType: ArcType.FULL,
+                              circularStrokeCap: CircularStrokeCap.round,
+                              progressColor: Color.fromRGBO(
+                                (255 * (1 - avg)).round(),
+                                (255 * avg).round(),
+                                0,
+                                1,
+                              ),
+                              arcBackgroundColor: Colors.black12,
+                            );
+                          },
                         ),
-                      ],
-                    )),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               const SizedBox(
                 height: 25,
@@ -156,45 +235,47 @@ class _HomeState extends State<Home> {
                   const Spacer()
                 ],
               ),
-              const SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
               Expanded(
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: GridView.count(
-                    padding: const EdgeInsets.all(0),
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    children: [
-                      roomBox(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
-                          0.6,
-                          'Help'),
-                      roomBox(
-                          'https://t3.ftcdn.net/jpg/03/09/15/38/360_F_309153899_e6oWpcNBV44DEx52vikvw9a5XNlw7pVb.jpg',
-                          0.6,
-                          'Help'),
-                      roomBox(
-                          'https://media.istockphoto.com/id/1129813604/photo/empty-minimalist-room-with-gray-wall-on-background.jpg?s=612x612&w=0&k=20&c=56EjJTKfoXHWrbPZn9FXt4kWcJf2OwUj6pnh4zFSo6U=',
-                          0.6,
-                          'Help'),
-                      roomBox(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
-                          0.6,
-                          'Help'),
-                      roomBox(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
-                          0.6,
-                          'Help'),
-                      roomBox(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRY6fUgPSCtolNpj70dmnHsNMoaXXb44GyaI8rCjP4A&s',
-                          0.6,
-                          'Help'),
-                    ],
+                  child: FutureBuilder(
+                    future: storage.ready,
+                    builder: (BuildContext context, snapshot) {
+                      if (snapshot.data == true) {
+                        List<dynamic> data = storage.getItem('rooms') ?? [];
+                        print(data);
+
+                        return GridView.count(
+                          padding: const EdgeInsets.all(0),
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          children: [
+                            for (var room in data)
+                              roomBox(
+                                  room['id'] as String,
+                                  room['img'] as String,
+                                  room['rs'] as double,
+                                  room['name'] as String,
+                                  room['desc'] as String)
+                          ],
+                        );
+                      } else {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                    },
                   ),
                 ),
+              ),
+              AnimatedContainer(
+                height: _infoOpened ? 200 : 0,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                child: _infoOpened
+                    ? infoBox(_infoString['rs'], _infoString['name'],
+                        _infoString['desc'])
+                    : Container(),
               ),
               const SizedBox(
                 height: 3,
@@ -262,9 +343,20 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget roomBox(String imgSource, double grade, String name) {
+  Widget roomBox(
+      String id, String imgSource, double grade, String name, String desc) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        setState(() {
+          if (_infoString['id'] == id) {
+            _infoOpened = false;
+            _infoString = {'id': null, 'rs': null, 'name': null, 'desc': null};
+          } else {
+            _infoOpened = true;
+            _infoString = {'id': id, 'rs': grade, 'name': name, 'desc': desc};
+          }
+        });
+      },
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -285,6 +377,70 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget infoBox(double rs, String name, String desc) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 24),
+          child: CircularPercentIndicator(
+            radius: 50.0,
+            lineWidth: 10.0,
+            animation: true,
+            percent: rs,
+            center: Text(
+              "${(rs * 100).toInt()}%",
+              style:
+                  const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+            ),
+            footer: const Text(
+              "Room Score",
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.0),
+            ),
+            arcType: ArcType.FULL,
+            circularStrokeCap: CircularStrokeCap.round,
+            progressColor: Color.fromRGBO(
+              (255 * (1 - rs)).round(),
+              (255 * rs).round(),
+              0,
+              1,
+            ),
+            arcBackgroundColor: Colors.black12,
+          ),
+        ),
+        const SizedBox(
+          width: 20,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 16, top: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
+                child: Text(
+                  desc,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
