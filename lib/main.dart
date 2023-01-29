@@ -84,11 +84,11 @@ class _AppState extends State<App> {
             OrientationBuilder(builder: (context, orientation) {
               return Padding(
                 padding: EdgeInsets.only(
-                  top: (_controller.value.previewSize != null
-                          ? MediaQuery.of(context).size.longestSide -
-                              _controller.value.previewSize!.longestSide
-                          : 0) /
-                      4,
+                  top: _controller.value.previewSize != null
+                      ? (MediaQuery.of(context).size.longestSide -
+                              _controller.value.previewSize!.longestSide) /
+                          4
+                      : 75,
                 ),
                 // padding: orientation == Orientation.portrait
                 //     ? const EdgeInsets.only(top: 75)
