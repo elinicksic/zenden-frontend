@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
+class ApiResponse {
+  final List<dynamic> objects;
+  final List<dynamic> colors;
 
-class ApiResponse extends StatelessWidget {
-  const ApiResponse({Key key}) : super(key: key);
+  const ApiResponse({required this.objects, required this.colors});
 
-  @override
-  Widget build(BuildContext context) {
-    return Container();
+  factory ApiResponse.fromJson(Map<String, dynamic> json) {
+    return ApiResponse(
+      objects: json['objects'],
+      colors: json['colors'],
+    );
   }
 }

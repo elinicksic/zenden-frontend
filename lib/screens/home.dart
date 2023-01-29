@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:tamuhack2023/screens/camera.dart';
 
+import '../main.dart';
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -170,7 +172,7 @@ class _HomeState extends State<Home> {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const RoomCamera()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const App()));
                 },
                 style: ButtonStyle(
                   overlayColor: MaterialStateProperty.all(Colors.purpleAccent),
