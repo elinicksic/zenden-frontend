@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:tamuhack2023/screens/camera.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -12,6 +13,7 @@ final list = ['Recent Room Captures', 'Bedroom', 'Living Room'];
 
 class _HomeState extends State<Home> {
   String dropdownValue = list.first;
+  bool _flag = false;
 
   @override
   Widget build(BuildContext context) {
@@ -142,11 +144,11 @@ class _HomeState extends State<Home> {
                 ],
               ),
               const SizedBox(
-                height: 25,
+                height: 15,
               ),
               Expanded(
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
                   child: GridView.count(
                     padding: const EdgeInsets.all(0),
                     crossAxisCount: 2,
@@ -162,6 +164,42 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 ),
+              ),
+              const SizedBox(
+                height: 3,
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const RoomCamera()));
+                },
+                style: ButtonStyle(
+                  overlayColor: MaterialStateProperty.all(Colors.purpleAccent),
+                  backgroundColor: const MaterialStatePropertyAll<Color>(Colors.white),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: const BorderSide(
+                        color: Colors.purpleAccent,
+                        width: 3,
+                      )
+                    )
+                  )
+                ),
+                child: Row(
+                  children: const [
+                    Spacer(),
+                    Text(
+                      'Add Room',
+                      style: TextStyle(
+                        color: Colors.purpleAccent
+                      ),
+                    ),
+                    Spacer(),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 12,
               )
             ],
           ),
