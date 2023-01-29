@@ -6,6 +6,7 @@ import 'package:localstorage/localstorage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tamuhack2023/models/api_response.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:tamuhack2023/screens/home.dart';
 import 'package:tamuhack2023/widgets/bulletpoint.dart';
 
 class ResultsPage extends StatefulWidget {
@@ -36,7 +37,7 @@ class _ResultsPageState extends State<ResultsPage> {
     } else if (widget.data.scoring['total'] < 0.7) {
       health = Health.acceptable;
     }
-
+    print('EEEEEEEEEEEEEEE'+_nameController.text+'EEEEEEEEEEEEEEEEEEE');
     return Scaffold(
       body: Center(
         child: SafeArea(
@@ -154,9 +155,28 @@ class _ResultsPageState extends State<ResultsPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 17),
                 child: TextButton(
                   onPressed: () async {
-                    // Save temporary file to directory
-                    Directory appDocDir =
-                        await getApplicationDocumentsDirectory();
+                    if(_nameController.text==null||_nameController.text=='') {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Please Re-enter the Name'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: const Text('Ok'),
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                    else {
+                      // Save temporary file to directory
+                      Directory appDocDir =
+                      await getApplicationDocumentsDirectory();
 
                     List<Map<String, Object>> roomsData =
                         await widget.storage.getItem('rooms');
@@ -171,7 +191,8 @@ class _ResultsPageState extends State<ResultsPage> {
                     });
                     await widget.storage.setItem('rooms', roomsData);
 
-                    Navigator.pop(context);
+                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => const Home()),ModalRoute.withName('/screens'));
+                    }
                   },
                   style: ButtonStyle(
                     overlayColor: MaterialStateProperty.all(
