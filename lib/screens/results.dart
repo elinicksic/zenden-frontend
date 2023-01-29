@@ -166,7 +166,7 @@ class _ResultsPageState extends State<ResultsPage> {
                       health == Health.good
                           ? Colors.green
                           : health == Health.acceptable
-                              ? Colors.yellow
+                              ? Colors.orange
                               : Colors.red,
                     ),
                     backgroundColor: const MaterialStatePropertyAll<Color>(
@@ -178,7 +178,7 @@ class _ResultsPageState extends State<ResultsPage> {
                           color: health == Health.good
                               ? Colors.green
                               : health == Health.acceptable
-                                  ? Colors.yellow
+                                  ? Colors.orange
                                   : Colors.red,
                           width: 3,
                         ),
@@ -194,7 +194,7 @@ class _ResultsPageState extends State<ResultsPage> {
                           color: health == Health.good
                               ? Colors.green
                               : health == Health.acceptable
-                                  ? Colors.yellow
+                                  ? Colors.orange
                                   : Colors.red,
                         ),
                       ),
